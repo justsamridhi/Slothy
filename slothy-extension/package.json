@@ -1,0 +1,20 @@
+{
+  "name": "slothy-extension",
+  "version": "1.0.0",
+  "description": "> **Slow down. Get the gist.**   > *A minimalist, privacy-first Chrome extension transforming long articles into calm summaries, interactive visual mind maps, key takeaways, and genuine action items using local open-weight AI.*",
+  "main": "extractor.js",
+  "scripts": {
+    "test": "mocha tests/**/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "chai": "^6.3.0",
+    "mocha": "^12.0.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

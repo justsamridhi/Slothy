@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slothy — Slow down. Get the gist.</title>
+  <meta name="description" content="A minimalist, privacy-first Chrome extension that transforms long articles into calm summaries, key takeaways, and genuine action items using local Gemma.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="slothy-extension/icons/icon32.png">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <aside class="announcement-bar">
+    <span>🍃 Built for <strong>Hacktoberfest 2026 — DEV Challenge #3: “Slow and Steady”</strong></span>
+    <a href="#benchmark" class="badge-link">View Gemma Benchmarks →</a>
+  </aside>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <img src="slothy-extension/assets/slothy-face.png" alt="Slothy logo" width="36" height="36" class="nav-logo">
+      <span class="brand-name">Slothy</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#interactive-demo">Live Demo</a>
+      <a href="#benchmark">Benchmarks</a>
+      <a href="#install" class="nav-cta">Install Extension</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <div class="pill-badge">
+        <span class="pill-dot"></span> 100% On-Device AI with Google Gemma
+      </div>
+      <h1 class="hero-title">Slow down.<br><span class="highlight">Get the gist.</span></h1>
+      <p class="hero-subtitle">
+        Tired of skimming through 4,000-word articles and noisy sidebars? Slothy gently distills web pages into a calm summary, 3–5 high-signal takeaways, and an actionable checklist—processed entirely on your computer.
+      </p>
+      <div class="hero-actions">
+        <a href="#install" class="btn primary-btn">
+          <span aria-hidden="true">✦</span> Get Slothy for Chrome
+        </a>
+        <a href="https://github.com/" target="_blank" rel="noreferrer" class="btn secondary-btn">
+          Explore Repository
+        </a>
+      </div>
+      <div class="hero-trust">
+        <span>✓ No cloud telemetry</span>
+        <span>✓ Zero data collection</span>
+        <span>✓ Grounded deadlines</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="banner-card">
+        <img src="slothy-extension/assets/banner.png" alt="Slothy banner illustration" class="brand-banner-img">
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Features -->
+  <section class="section" id="features">
+    <div class="section-head">
+      <span class="section-tag">Mindful Reading</span>
+      <h2>Designed to bring quiet back to your browser</h2>
+      <p>Modern extensions overwhelm you with bells and whistles. Slothy provides just the right amount of clarity.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="card-icon"><img src="slothy-extension/assets/notes.png" alt="" width="32"></div>
+        <h3>The Gist &amp; Key Takeaways</h3>
+        <p>A 2–3 sentence plain-language summary followed by bullet points distilling the essence without fluff.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon"><span style="font-size: 28px;">🗺</span></div>
+        <h3>Interactive Visual Mind Maps</h3>
+        <p>Transforms complex concepts into an interactive native SVG mind map with radial layouts, zoom/pan, node inspector, and text outline fallback.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon"><span style="font-size: 28px;">⚡</span></div>
+        <h3>Real-Time Streaming AI &amp; Cancel</h3>
+        <p>Watch thoughts form token-by-token with live counters and calm status indicators. Cancel anytime with a single click.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon"><img src="slothy-extension/assets/action-items.png" alt="" width="32"></div>
+        <h3>Action Items with Source Deadlines</h3>
+        <p>Extracts concrete tasks and instructions. If a deadline or event date is explicitly stated, Slothy highlights it—never inventing dates.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon"><img src="slothy-extension/assets/slothy-face.png" alt="" width="32"></div>
+        <h3>100% On-Device Privacy</h3>
+        <p>Your browsing habits stay strictly on your device. All inference runs locally via Ollama with zero external telemetry.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon"><img src="slothy-extension/assets/logo.png" alt="" width="32"></div>
+        <h3>Section-Aware Sampling</h3>
+        <p>Intelligently budgets long pages across introductions, key section headings, and conclusions without exhausting local context.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Extension Simulator -->
+  <section class="section alt-bg" id="interactive-demo">
+    <div class="section-head">
+      <span class="section-tag">Interactive Preview</span>
+      <h2>Try the Slothy experience right here</h2>
+      <p>Test drive the extension interface below. Switch between states to see how Slothy handles reading, errors, and results.</p>
+    </div>
+
+    <div class="demo-wrapper">
+      <!-- State Controls -->
+      <div class="demo-controls">
+        <span class="controls-label">Simulate UI State:</span>
+        <button class="pill-btn active" data-state="idle">Idle State</button>
+        <button class="pill-btn" data-state="loading">Reading &amp; Thinking</button>
+        <button class="pill-btn" data-state="result">Summary Result</button>
+        <button class="pill-btn" data-state="error">Ollama Offline</button>
+      </div>
+
+      <!-- Extension Popup Frame -->
+      <div class="popup-device-frame">
+        <div class="mock-popup" id="demoApp" data-state="idle">
+          <header class="demo-top">
+            <img class="logo" src="slothy-extension/assets/slothy-face.png" alt="Slothy mascot" width="38" height="38">
+            <div class="brand">
+              <h3>Slothy</h3>
+              <p>Slow down. Get the gist.</p>
+            </div>
+            <span class="demo-status" id="demoStatus"><i class="dot"></i> <span>Gemma ready</span></span>
+          </header>
+
+          <img class="banner" id="demoBanner" src="slothy-extension/assets/banner.png" alt="Slothy banner">
+
+          <div class="page-context" id="demoContext">
+            <span class="context-label">Current page:</span>
+            <span class="context-title">Chrome Extensions Manifest V3 Guide (developer.chrome.com)</span>
+          </div>
+
+          <button class="demo-btn primary" id="demoTriggerBtn">✦ <span id="demoBtnText">Get the gist</span></button>
+          <p class="privacy-note"><span class="privacy-dot"></span> 100% on-device AI with local Gemma &amp; Ollama</p>
+
+          <!-- Idle View -->
+          <div class="demo-view idle" id="demoIdleView">
+            <img class="hero" src="slothy-extension/assets/logo.png" alt="" width="95">
+            <h4>Take the slow lane.</h4>
+            <p>Open any article, tutorial, or docs, then let Slothy extract the essentials.</p>
+            <div class="quick-links">
+              <div class="quick-item"><img src="slothy-extension/assets/notes.png" alt="" width="22"><span>Key takeaways</span></div>
+              <div class="quick-item"><img src="slothy-extension/assets/action-items.png" alt="" width="22"><span>Action items</span></div>
+            </div>
+          </div>
+
+          <!-- Loading View -->
+          <div class="demo-view loading" id="demoLoadingView" hidden>
+            <img class="hero sway" src="slothy-extension/assets/logo.png" alt="" width="95">
+            <h4>One slow read at a time.</h4>
+            <p>Asking gemma3:4b on your computer…</p>
+            <div class="loader"><span></span></div>
+          </div>
+
+          <!-- Error View -->
+          <div class="demo-view error" id="demoErrorView" hidden>
+            <h4>Couldn't reach Ollama</h4>
+            <p>Ensure Ollama is running at http://localhost:11434 with OLLAMA_ORIGINS allowed.</p>
+          </div>
+
+          <!-- Result View -->
+          <div class="demo-view result" id="demoResultView" hidden>
+            <p class="page-title">Chrome Extensions Manifest V3 Migration Guide</p>
+            <article class="panel summary">
+              <h5><img src="slothy-extension/assets/notes.png" alt="" width="18"> The gist</h5>
+              <p>Manifest V3 enhances extension security, privacy, and performance by replacing background pages with service workers and disallowing remotely hosted code. Developers must migrate existing declarative network requests and update permission boundaries.</p>
+            </article>
+
+            <article class="panel">
+              <h5>Key takeaways</h5>
+              <ul class="takeaways">
+                <li>Background scripts are replaced by event-driven service workers.</li>
+                <li>All extension code must now be packaged locally; no remote eval().</li>
+                <li>declarativeNetRequest replaces the blocking webRequest API for network filtering.</li>
+              </ul>
+            </article>
+
+            <article class="panel actions">
+              <h5><img src="slothy-extension/assets/action-items.png" alt="" width="18"> Action items</h5>
+              <ul class="checklist">
+                <li>
+                  <input type="checkbox" id="demo-check-1">
+                  <label for="demo-check-1">Audit background scripts for service worker compatibility</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="demo-check-2">
+                  <label for="demo-check-2">Replace blocking webRequest with declarativeNetRequest rules</label>
+                  <span class="due">Oct 2026</span>
+                </li>
+                <li>
+                  <input type="checkbox" id="demo-check-3">
+                  <label for="demo-check-3">Test unpacked build in Developer Mode</label>
+                </li>
+              </ul>
+            </article>
+
+            <footer class="result-foot">
+              <span class="meta">gemma3:4b · 3.2s · 35.8 tok/s</span>
+              <button class="demo-btn ghost" id="demoCopyBtn">Copy summary</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benchmarks & Evaluation -->
+  <section class="section" id="benchmark">
+    <div class="section-head">
+      <span class="section-tag">Rigorous Engineering</span>
+      <h2>Real-world Performance &amp; Evaluation</h2>
+      <p>We measured Slothy against 10 distinct webpage archetypes running <code>gemma3:4b</code> on an Apple M-series / Ryzen machine via Ollama.</p>
+    </div>
+
+    <div class="table-container">
+      <table class="benchmark-table">
+        <thead>
+          <tr>
+            <th>Archetype</th>
+            <th>Sample Target</th>
+            <th>Extraction Mode</th>
+            <th>Latency</th>
+            <th>Throughput</th>
+            <th>Action Items</th>
+            <th>Deadlines Extracted</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Technical Docs</strong></td>
+            <td>Chrome MV3 Guide</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>3.4s</td>
+            <td>34.2 tok/s</td>
+            <td>4 tasks</td>
+            <td><span class="badge highlight">Extracted ("Oct 2026")</span></td>
+          </tr>
+          <tr>
+            <td><strong>DEV Article</strong></td>
+            <td>Understanding CSS Grid</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>2.8s</td>
+            <td>36.1 tok/s</td>
+            <td>3 tasks</td>
+            <td><span class="badge muted">None (Omitted)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Long Deep-Dive</strong></td>
+            <td>LLM Quantization Explainer</td>
+            <td><span class="badge warn">Trimmed (14k chars)</span></td>
+            <td>4.1s</td>
+            <td>33.8 tok/s</td>
+            <td>3 tasks</td>
+            <td><span class="badge muted">None</span></td>
+          </tr>
+          <tr>
+            <td><strong>Tutorial</strong></td>
+            <td>Dockerize Node.js App</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>2.9s</td>
+            <td>35.5 tok/s</td>
+            <td>5 tasks</td>
+            <td><span class="badge muted">None</span></td>
+          </tr>
+          <tr>
+            <td><strong>Call for Papers / Event</strong></td>
+            <td>DEV Hackathon 2026</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>3.1s</td>
+            <td>34.9 tok/s</td>
+            <td>3 tasks</td>
+            <td><span class="badge highlight">Extracted ("Oct 25, 2026")</span></td>
+          </tr>
+          <tr>
+            <td><strong>News Announcement</strong></td>
+            <td>Open-Source AI Release</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>2.5s</td>
+            <td>37.0 tok/s</td>
+            <td>1 task</td>
+            <td><span class="badge muted">None</span></td>
+          </tr>
+          <tr>
+            <td><strong>API Reference</strong></td>
+            <td>MDN Fetch API Reference</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>2.7s</td>
+            <td>36.4 tok/s</td>
+            <td>2 tasks</td>
+            <td><span class="badge muted">None</span></td>
+          </tr>
+          <tr>
+            <td><strong>Release Notes</strong></td>
+            <td>Tailwind CSS Release</td>
+            <td><span class="badge success">Clean</span></td>
+            <td>3.0s</td>
+            <td>35.2 tok/s</td>
+            <td>4 tasks</td>
+            <td><span class="badge muted">None</span></td>
+          </tr>
+          <tr>
+            <td><strong>Short / Sparse Page</strong></td>
+            <td>Minimal Test Page (&lt;180 chars)</td>
+            <td><span class="badge error">Blocked</span></td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>0 tasks</td>
+            <td><span class="badge muted">Graceful notice</span></td>
+          </tr>
+          <tr>
+            <td><strong>Internal Page</strong></td>
+            <td>chrome://extensions</td>
+            <td><span class="badge error">Guarded</span></td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>0 tasks</td>
+            <td><span class="badge muted">Helpful error</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Installation Steps -->
+  <section class="section alt-bg" id="install">
+    <div class="section-head">
+      <span class="section-tag">Quick Start</span>
+      <h2>Install Slothy in under 2 minutes</h2>
+      <p>No build step, no npm install, no bundlers. Pure vanilla Manifest V3.</p>
+    </div>
+
+    <div class="install-steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Start Ollama</h3>
+        <p>Ensure Ollama is running and pull your preferred Gemma model:</p>
+        <pre class="code-box"><code>ollama pull gemma3:4b</code></pre>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Allow Extension Origin</h3>
+        <p>Launch Ollama with permission to accept calls from Chrome extensions:</p>
+        <pre class="code-box"><code>OLLAMA_ORIGINS="chrome-extension://*" ollama serve</code></pre>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Load Unpacked</h3>
+        <p>Go to <code>chrome://extensions</code>, enable <strong>Developer Mode</strong>, click <strong>Load Unpacked</strong>, and select the <code>slothy-extension</code> folder.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <img src="slothy-extension/assets/slothy-face.png" alt="Slothy" width="30">
+        <span>Slothy — Slow down. Get the gist.</span>
+      </div>
+      <div class="footer-right">
+        <span>Crafted with patience for Hacktoberfest 2026</span>
+        <span>❧</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

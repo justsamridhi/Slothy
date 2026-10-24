@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slothy — Slow down. Get the gist.</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<main class="app" id="app" data-state="idle">
+  <!-- Header -->
+  <header class="top">
+    <img class="logo" src="assets/slothy-face.png" alt="Slothy mascot" width="38" height="38">
+    <div class="brand">
+      <h1>Slothy</h1>
+      <p>Slow down. Get the gist.</p>
+    </div>
+    <div class="header-status">
+      <span class="cached-pill" id="cachedPill" hidden title="Loaded from local cache">⚡ Cached</span>
+      <span class="status" id="status" data-ok="unknown" title="Local Ollama status">
+        <i class="dot"></i>
+        <span id="statusText">Checking</span>
+      </span>
+    </div>
+  </header>
+
+  <img class="banner" id="bannerImg" src="assets/banner.png" alt="Slothy — Slow down. Get the gist.">
+
+  <!-- Active Page Context Bar -->
+  <div class="page-context" id="pageContext">
+    <span class="context-label">Ready:</span>
+    <span class="context-title" id="contextTitle">Checking active tab…</span>
+  </div>
+
+  <!-- Primary Action -->
+  <button class="btn primary" id="summarizeBtn" type="button">
+    <span aria-hidden="true" class="btn-sparkle">✦</span>
+    <span id="summarizeBtnText">Get the gist</span>
+  </button>
+  <p class="privacy-note"><span class="privacy-dot"></span> 100% on-device AI with local Ollama</p>
+
+  <!-- IDLE STATE -->
+  <section class="view idle" id="idleView">
+    <img class="hero" src="assets/logo.png" alt="Slothy holding a leaf" width="110">
+    <h2>Take the slow lane.</h2>
+    <p>Distill any article, tutorial, or docs into a clear summary, visual mind map, and action items.</p>
+    <div class="quick-links">
+      <div class="quick-item">
+        <img src="assets/notes.png" alt="" width="24" height="24">
+        <span>Gist &amp; Map</span>
+      </div>
+      <div class="quick-item">
+        <img src="assets/action-items.png" alt="" width="24" height="24">
+        <span>Action items</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOADING STATE -->
+  <section class="view loading" id="loadingView" hidden aria-live="polite">
+    <img class="hero sway" src="assets/logo.png" alt="Slothy thinking" width="105">
+    <h2>Untangling the ideas…</h2>
+    <p id="loadingText" class="loading-text">Finding the main idea…</p>
+    <div class="stream-progress" id="streamProgress" hidden>
+      <span id="streamTokens">0</span> tokens gathered
+    </div>
+    <div class="loader"><span></span></div>
+    <button class="btn ghost cancel-btn" id="cancelBtn" type="button">✕ Cancel generation</button>
+  </section>
+
+  <!-- ERROR / SETUP STATE -->
+  <section class="view error" id="errorView" hidden role="alert">
+    <h2 id="errorTitle">Couldn't reach Ollama</h2>
+    <p id="errorBody"></p>
+    <div class="setup-card" id="corsSetupCard" hidden>
+      <p class="setup-instruction">Windows PowerShell: Run this command to allow Chrome extensions</p>
+      <div class="cmd-box">
+        <code id="corsCmd">setx OLLAMA_ORIGINS "chrome-extension://*"</code>
+        <button class="btn ghost sm-btn" id="copyCorsBtn" type="button">Copy command</button>
+      </div>
+      <ol class="setup-steps">
+        <li>Fully quit Ollama (tray icon + any <code>ollama.exe</code> in Task Manager).</li>
+        <li>Relaunch Ollama from Start Menu or terminal.</li>
+        <li><em>Mac/Linux:</em> <code>OLLAMA_ORIGINS="chrome-extension://*" ollama serve</code></li>
+      </ol>
+    </div>
+    <div class="error-actions" id="errorActions">
+      <button class="btn ghost" id="retryBtn" type="button">Retry</button>
+    </div>
+  </section>
+
+  <!-- RESULT STATE -->
+  <section class="view result" id="resultView" hidden>
+    <div class="result-header">
+      <p class="page-title" id="pageTitle"></p>
+      <span class="byline" id="pageByline" hidden></span>
+    </div>
+
+    <!-- Segmented Navigation Tabs -->
+    <nav class="result-nav" role="tablist" aria-label="Reading views">
+      <button class="nav-tab active" role="tab" id="tabGist" aria-selected="true" data-panel="panelGist">✦ Gist</button>
+      <button class="nav-tab" role="tab" id="tabMap" aria-selected="false" data-panel="panelMap">🗺 Visual Map</button>
+      <button class="nav-tab" role="tab" id="tabTakeaways" aria-selected="false" data-panel="panelTakeaways">💡 Points</button>
+      <button class="nav-tab" role="tab" id="tabActions" aria-selected="false" data-panel="panelActions">✓ Actions</button>
+    </nav>
+
+    <!-- Tab Panels -->
+    <!-- 1. Gist Panel -->
+    <div class="tab-panel active" id="panelGist" role="tabpanel" aria-labelledby="tabGist">
+      <article class="panel summary">
+        <h2><img src="assets/notes.png" alt="" width="20" height="20"> Central Idea</h2>
+        <p id="summary"></p>
+      </article>
+      <div class="gist-map-hint" id="gistMapHint">
+        <span class="hint-icon">🗺</span>
+        <div class="hint-text">
+          <strong>Visual Mind Map Ready</strong>
+          <p id="mapCentralHint">Explore connections in the Visual Map tab</p>
+        </div>
+        <button class="btn ghost sm-btn" id="viewMapFromHintBtn" type="button">View map →</button>
+      </div>
+    </div>
+
+    <!-- 2. Visual Mind Map Panel -->
+    <div class="tab-panel" id="panelMap" role="tabpanel" aria-labelledby="tabMap" hidden>
+      <div class="map-container">
+        <div class="map-header">
+          <span class="map-type-chip" id="mapTypeChip">Mind Map</span>
+          <div class="map-toolbar">
+            <button class="map-btn" id="zoomInBtn" title="Zoom in" aria-label="Zoom in">+</button>
+            <button class="map-btn" id="zoomOutBtn" title="Zoom out" aria-label="Zoom out">−</button>
+            <button class="map-btn" id="zoomResetBtn" title="Reset view" aria-label="Reset view">⟲</button>
+            <button class="map-btn" id="outlineToggleBtn" title="Toggle text outline view" aria-label="Toggle text outline">Outline</button>
+          </div>
+        </div>
+
+        <div class="svg-viewport" id="svgViewport">
+          <svg id="mindmapSvg" class="mindmap-svg" viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#8A966F" />
+              </marker>
+            </defs>
+            <g id="svgContentGroup"></g>
+          </svg>
+        </div>
+
+        <!-- Node Inspector Detail -->
+        <div class="node-inspector" id="nodeInspector" hidden>
+          <div class="node-insp-head">
+            <strong id="nodeInspLabel">Concept Detail</strong>
+            <button class="node-insp-close" id="nodeInspClose" aria-label="Close inspector">✕</button>
+          </div>
+          <p id="nodeInspDesc"></p>
+        </div>
+
+        <!-- Text Outline Alternative for Accessibility & Fallback -->
+        <div class="map-outline" id="mapOutline" hidden>
+          <ul id="outlineList" class="outline-list"></ul>
+        </div>
+
+        <!-- Fallback if visual generation fails -->
+        <div class="map-fallback" id="mapFallback" hidden>
+          <p>Visual map unavailable for this article.</p>
+          <button class="btn ghost sm-btn" id="retryMapBtn" type="button">Retry visual</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Takeaways Panel -->
+    <div class="tab-panel" id="panelTakeaways" role="tabpanel" aria-labelledby="tabTakeaways" hidden>
+      <article class="panel" id="takeawaysPanel">
+        <h2>Key Takeaways</h2>
+        <ul class="takeaways" id="takeaways"></ul>
+      </article>
+    </div>
+
+    <!-- 4. Actions Panel -->
+    <div class="tab-panel" id="panelActions" role="tabpanel" aria-labelledby="tabActions" hidden>
+      <article class="panel actions" id="actionsPanel">
+        <h2><img src="assets/action-items.png" alt="" width="20" height="20"> Action Items</h2>
+        <ul class="checklist" id="actions"></ul>
+        <p class="none" id="actionsNone" hidden>Nothing to do here. Enjoy the quiet.</p>
+      </article>
+    </div>
+
+    <!-- Result Footer Actions -->
+    <footer class="result-foot">
+      <span class="meta" id="meta"></span>
+      <div class="benchmark-details" id="benchmarkDetails" hidden></div>
+      <div class="result-btn-row">
+        <button class="btn ghost sm-btn" id="copyBtn" type="button" title="Copy entire markdown summary">Copy Gist</button>
+  <button class="btn ghost sm-btn" id="openWindowBtn" type="button" title="Open in resizable window">Open Window</button>
+
+        <button class="btn ghost sm-btn" id="regenBtn" type="button" title="Force re-generation bypassing cache">↻ Re-read</button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- SETTINGS DRAWER -->
+  <details class="settings" id="settingsDetails">
+    <summary>Settings &amp; Benchmarks</summary>
+    <div class="settings-body">
+      <label>
+        Model selection
+        <div class="model-select-group">
+          <select id="modelSelect" class="settings-select" title="Installed Ollama models">
+            <option value="llama3.2:3b">llama3.2:3b (installed)</option>
+            <option value="gemma3:4b">gemma3:4b</option>
+            <option value="custom">Custom model name…</option>
+          </select>
+          <input id="modelInput" type="text" spellcheck="false" autocomplete="off" placeholder="llama3.2:3b">
+        </div>
+      </label>
+      <label>
+        Ollama address
+        <input id="urlInput" type="url" spellcheck="false" autocomplete="off" placeholder="http://localhost:11434">
+      </label>
+      <div class="settings-btns">
+        <button class="btn ghost" id="saveSettings" type="button">Save settings</button>
+        <button class="btn ghost" id="testConnBtn" type="button" title="Test connection to local Ollama">Test connection</button>
+        <button class="btn ghost" id="exportLogsBtn" type="button" title="Copy local evaluation benchmark log">Copy metrics</button>
+        <button class="btn ghost" id="clearCacheBtn" type="button" title="Clear locally cached summaries">Clear cache</button>
+      </div>
+      <p class="settings-msg" id="settingsMsg" hidden></p>
+    </div>
+  </details>
+
+  <footer class="app-footer">
+    <span>Made for mindful reading</span>
+    <span aria-hidden="true">❧</span>
+  </footer>
+</main>
+
+<script src="extractor.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
